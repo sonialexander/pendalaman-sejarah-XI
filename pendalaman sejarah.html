@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30 Soal SAS Sejarah XI - SMK Wikrama</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
+        .correct-ans { background-color: #10b981 !important; color: white; border-color: #059669 !important; }
+        .wrong-ans { background-color: #ef4444 !important; color: white; border-color: #dc2626 !important; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="bg-indigo-800 text-white p-8 rounded-t-2xl shadow-xl">
+            <h1 class="text-3xl font-bold">Tryout 30 Soal SAS Sejarah</h1>
+            <p class="text-indigo-200 mt-2">Persiapan Sumatif Akhir Semester 2025 - SMK Wikrama Bogor</p>
+        </div>
+
+        <div id="quiz-container" class="bg-white p-8 rounded-b-2xl shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <span id="progress-text" class="text-indigo-600 font-bold text-lg">Soal 1 / 30</span>
+                <span id="score-live" class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full font-bold">Skor: 0</span>
+            </div>
+            
+            <div id="question-box">
+                <h2 id="question-text" class="text-xl font-semibold text-gray-800 mb-6 leading-relaxed"></h2>
+                <div id="options-grid" class="grid grid-cols-1 gap-4"></div>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="hidden mt-8 w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg">
+                Soal Berikutnya →
+            </button>
+        </div>
+
+        <div id="result-box" class="hidden space-y-6">
+            <div class="bg-white p-10 rounded-2xl shadow-xl text-center">
+                <h2 class="text-3xl font-bold text-gray-800">Latihan Selesai!</h2>
+                <p class="text-7xl font-black text-indigo-600 my-6" id="final-score">0</p>
+                <div id="evaluation-text" class="text-lg font-medium text-gray-600 mb-8"></div>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="showReview()" class="bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 transition">Lihat Hasil & Review</button>
+                    <button onclick="location.reload()" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-bold hover:bg-gray-300 transition">Ulangi</button>
+                </div>
+            </div>
+
+            <div id="review-list" class="hidden space-y-4">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Review Jawaban:</h3>
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "Apa dampak kekalahan Jepang (Vacuum of Power) bagi Indonesia?", a: ["Belanda langsung merdeka", "Munculnya kesempatan proklamasi", "Jepang membangun pangkalan baru", "Inggris membantu Indonesia"], c: 1, e: "Kekosongan kekuasaan memungkinkan Indonesia memproklamasikan kemerdekaan tanpa hambatan besar dari penjajah." },
+            { q: "Tujuan utama golongan muda membawa Soekarno-Hatta ke Rengasdengklok adalah...", a: ["Menunggu perintah Jepang", "Menjauhkan dari pengaruh Jepang", "Melindungi dari serangan Inggris", "Meminta bantuan Belanda"], c: 1, e: "Pemuda ingin proklamasi murni hasil perjuangan bangsa sendiri." },
+            { q: "Siapa tokoh yang menjamin keamanan saat perumusan proklamasi?", a: ["Laksamana Maeda", "Marsekal Terauchi", "Jenderal Nishimura", "Van Mook"], c: 0, e: "Laksamana Maeda memberikan rumahnya sebagai tempat aman bagi tokoh bangsa." },
+            { q: "Siapa pengetik naskah proklamasi yang autentik?", a: ["Sukarni", "Sayuti Melik", "Ahmad Soebardjo", "B.M. Diah"], c: 1, e: "Sayuti Melik mengetik naskah dengan beberapa perubahan dari draf tulisan tangan." },
+            { q: "Wilayah de facto RI menurut Perjanjian Linggarjati adalah...", a: ["Jawa saja", "Jawa, Madura, Sumatera", "Seluruh Nusantara", "Jawa dan Bali"], c: 1, e: "Belanda hanya mengakui kedaulatan RI atas Jawa, Madura, dan Sumatera." },
+            { q: "Strategi 'Supit Urang' dipimpin oleh Jenderal Sudirman pada peristiwa...", a: ["Pertempuran Surabaya", "Palagan Ambarawa", "Medan Area", "Bandung Lautan Api"], c: 1, e: "Taktik ini berhasil mengepung musuh dari dua sisi secara bersamaan." },
+            { q: "Apa pemicu pertempuran 10 November di Surabaya?", a: ["Tewasnya Jenderal Mallaby", "Bumi hangus kota", "Penangkapan Bung Tomo", "Pencurian senjata"], c: 0, e: "Kematian AWS Mallaby memicu ultimatum Inggris yang ditolak rakyat Surabaya." },
+            { q: "Strategi rakyat Bandung membakar kota dikenal sebagai...", a: ["Perang Gerilya", "Bandung Lautan Api", "Operasi Kilat", "Serangan Umum"], c: 1, e: "Kota dibakar agar tidak dijadikan markas militer oleh Sekutu." },
+            { q: "Apa arti istilah 'Puputan' di Bali?", a: ["Perundingan damai", "Perang habis-habisan", "Lari dari musuh", "Menyerah"], c: 1, e: "Puputan Margarana adalah pertempuran sampai titik darah terakhir dipimpin Ngurah Rai." },
+            { q: "Negara pertama yang mengakui kedaulatan RI secara de jure adalah...", a: ["Amerika Serikat", "Mesir", "Belanda", "Australia"], c: 1, e: "Mesir adalah pendukung awal kedaulatan Indonesia di dunia internasional." },
+            { q: "Pemimpin PDRI (Pemerintah Darurat RI) di Sumatera adalah...", a: ["Soekarno", "Syafruddin Prawiranegara", "Sutan Sjahrir", "Tan Malaka"], c: 1, e: "PDRI menjaga eksistensi RI saat Yogyakarta diduduki Belanda pada Agresi II." },
+            { q: "Apa dampak Perjanjian Renville bagi Indonesia?", a: ["Wilayah RI makin luas", "Wilayah RI makin sempit", "Belanda pergi", "NKRI kembali utuh"], c: 1, e: "Renville merugikan Indonesia karena wilayahnya semakin sempit terhimpit garis Van Mook." },
+            { q: "Tokoh delegasi Indonesia dalam Perjanjian Renville adalah...", a: ["Amir Sjarifuddin", "Moh. Hatta", "Sutan Sjahrir", "Agus Salim"], c: 0, e: "Perundingan dilakukan di atas kapal perang Amerika (USS Renville)." },
+            { q: "Agresi Militer Belanda II (1948) ditujukan untuk menyerang...", a: ["Jakarta", "Yogyakarta", "Surabaya", "Medan"], c: 1, e: "Yogyakarta diserang karena saat itu menjadi Ibu Kota Republik Indonesia." },
+            { q: "Tujuan dibentuknya Komite Nasional Indonesia Pusat (KNIP) adalah...", a: ["Mengganti Presiden", "Membantu tugas Presiden sementara", "Melawan Jepang", "Mendirikan partai"], c: 1, e: "KNIP berfungsi sebagai badan legislatif sebelum terbentuknya DPR/MPR." },
+            { q: "Siapa pahlawan yang gugur dalam peristiwa Bandung Lautan Api?", a: ["Mohammad Toha", "Bung Tomo", "I Gusti Ngurah Rai", "Slamet Riyadi"], c: 0, e: "Mohammad Toha gugur saat meledakkan gudang amunisi musuh." },
+            { q: "Apa pemicu konflik di Medan Area?", a: ["Gugurnya dr. Karyadi", "Pemasangan papan 'Fixed Boundaries'", "Tewasnya Mallaby", "Bom atom"], c: 1, e: "Belanda secara sepihak menetapkan batas wilayah di Medan." },
+            { q: "Hasil utama Konferensi Meja Bundar (KMB) adalah...", a: ["Penjajahan berlanjut", "Pengakuan kedaulatan dlm bentuk RIS", "Papua langsung diserahkan", "NKRI langsung berdiri"], c: 1, e: "Belanda menyerahkan kedaulatan namun Indonesia harus berbentuk Serikat (RIS)." },
+            { q: "Mengapa Indonesia kembali ke NKRI dari bentuk RIS?", a: ["Perintah Belanda", "Bentuk RIS tidak sesuai aspirasi rakyat", "RIS terlalu kuat", "Permintaan Sekutu"], c: 1, e: "Rakyat ingin negara kesatuan, bukan negara bagian bentukan Belanda." },
+            { q: "Siapa yang mengusulkan teks proklamasi ditandatangani Soekarno-Hatta?", a: ["Wikana", "Sukarni", "Sayuti Melik", "Maeda"], c: 1, e: "Sukarni mengusulkan tanda tangan 'Atas Nama Bangsa Indonesia'." },
+            { q: "Pertempuran Lima Hari di Semarang dipicu oleh...", a: ["Gugurnya dr. Karyadi", "Tewasnya Mallaby", "Batas wilayah", "Proklamasi"], c: 0, e: "Isu racun di cadangan air minum yang menewaskan dr. Karyadi memicu perang." },
+            { q: "Isi Maklumat 3 November 1945 adalah...", a: ["Pembentukan TKR", "Anjuran pembentukan partai politik", "Perubahan bendera", "UUD 1945"], c: 1, e: "Maklumat ini menandai dimulainya sistem multipartai di Indonesia." },
+            { q: "Apa fungsi KTN (Komisi Tiga Negara)?", a: ["Membantu Belanda", "Penengah konflik Indonesia-Belanda", "Menjajah kembali", "Pasukan tempur"], c: 1, e: "KTN dibentuk PBB terdiri dari Australia, Belgia, dan Amerika Serikat." },
+            { q: "Peristiwa Bojong Kokosan terjadi di wilayah...", a: ["Sukabumi", "Bogor", "Bandung", "Cianjur"], c: 0, e: "Penghadangan konvoi Sekutu di perbukitan Bojong Kokosan, Sukabumi." },
+            { q: "Berapa jumlah provinsi awal Indonesia hasil sidang PPKI?", a: ["5 Provinsi", "8 Provinsi", "12 Provinsi", "34 Provinsi"], c: 1, e: "PPKI menetapkan 8 provinsi utama pada awal kemerdekaan." },
+            { q: "Siapa Perdana Menteri pertama Indonesia?", a: ["Soekarno", "Sutan Sjahrir", "Moh. Hatta", "Natsir"], c: 1, e: "Sjahrir memimpin kabinet parlementer pertama Indonesia." },
+            { q: "Monumen Palagan Ambarawa dibangun untuk mengenang...", a: ["Bung Tomo", "Kemenangan Sudirman", "Kekalahan Belanda", "Hari Lahir Pancasila"], c: 1, e: "Monumen ini memperingati kemenangan gemilang melawan Sekutu." },
+            { q: "Dampak sosial jatuhnya status kolonial adalah...", a: ["Pemisahan kasta", "Kesetaraan hak warga negara", "Eropa tetap penguasa", "Warga dilarang sekolah"], c: 1, e: "Kemerdekaan menghapus strata sosial era Belanda." },
+            { q: "Tujuan Agresi Militer I Belanda adalah...", a: ["Membantu ekonomi RI", "Merebut kembali sumber daya ekonomi/wilayah", "Perdamaian", "Mencari rempah"], c: 1, e: "Belanda ingin menguasai wilayah strategis di Jawa dan Sumatera." },
+            { q: "Kapan kedaulatan Indonesia diakui dunia internasional lewat KMB?", a: ["17 Agustus 1945", "27 Desember 1949", "1 Juni 1945", "10 November 1945"], c: 1, e: "Penyerahan kedaulatan resmi dilakukan di Den Haag pada akhir 1949." }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let userChoices = [];
+
+        function loadQuestion() {
+            const data = quizData[currentIdx];
+            document.getElementById('progress-text').innerText = `Soal ${currentIdx + 1} / ${quizData.length}`;
+            document.getElementById('question-text').innerText = data.q;
+            
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left p-5 border-2 border-slate-200 rounded-xl font-medium text-slate-700 hover:border-indigo-500 hover:bg-indigo-50 transition-all";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i);
+                grid.appendChild(btn);
+            });
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(idx) {
+            userChoices.push(idx);
+            const data = quizData[currentIdx];
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if(idx === data.c) {
+                btns[idx].classList.add('correct-ans');
+                score += (100 / quizData.length);
+            } else {
+                btns[idx].classList.add('wrong-ans');
+                btns[data.c].classList.add('correct-ans');
+            }
+
+            btns.forEach(b => b.disabled = true);
+            document.getElementById('score-live').innerText = `Skor: ${Math.round(score)}`;
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if(currentIdx < quizData.length) {
+                loadQuestion();
+            } else {
+                showFinalResults();
+            }
+        }
+
+        function showFinalResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('result-box').classList.remove('hidden');
+            const final = Math.round(score);
+            document.getElementById('final-score').innerText = final;
+            document.getElementById('evaluation-text').innerText = final >= 75 ? "Hebat! Kamu sudah siap untuk SAS Sejarah!" : "Ayo pelajari lagi review di bawah agar hasil SAS maksimal!";
+        }
+
+        function showReview() {
+            document.getElementById('review-list').classList.remove('hidden');
+            const list = document.getElementById('review-list');
+            list.innerHTML = '<h3 class="text-2xl font-bold text-gray-800 mb-4">Analisis Jawaban:</h3>';
+
+            quizData.forEach((item, i) => {
+                const isCorrect = userChoices[i] === item.c;
+                const div = document.createElement('div');
+                div.className = `p-5 rounded-xl border-l-8 mb-4 shadow-sm ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`;
+                div.innerHTML = `
+                    <p class="font-bold text-slate-800 text-lg">${i+1}. ${item.q}</p>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-sm">Jawaban Kamu: <span class="${isCorrect ? 'text-green-700' : 'text-red-700'} font-bold">${item.a[userChoices[i]]}</span></p>
+                        ${!isCorrect ? `<p class="text-sm text-slate-600 font-medium">Jawaban Benar: <span class="text-green-700">${item.a[item.c]}</span></p>` : ''}
+                        <p class="text-sm mt-2 text-slate-500 italic bg-white p-2 rounded"><strong>Info:</strong> ${item.e}</p>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
